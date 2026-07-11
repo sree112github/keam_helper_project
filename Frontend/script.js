@@ -18,6 +18,13 @@ const btnSearch = document.getElementById('btn-search');
 const resultsPlaceholder = document.getElementById('results-placeholder');
 const resultsCard = document.getElementById('results-card');
 const errorCard = document.getElementById('error-card');
+const btnRetryInit = document.getElementById('btn-retry-init');
+
+const DEFAULT_PLACEHOLDER_HTML = `
+    <div class="placeholder-icon">🔍</div>
+    <h3>Ready to Search</h3>
+    <p>Select the year, round, college, course, and category on the left to display the last allotment rank.</p>
+`;
 
 const resultRankValue = document.getElementById('result-rank-value');
 const resultCollege = document.getElementById('result-college');
@@ -78,12 +85,12 @@ function resetSelect(selectEl, defaultText) {
 
 // Check if all fields are selected to enable Search button
 function checkSearchValidity() {
-    const isValid = selectYear.value && 
-                    selectRound.value && 
-                    selectCollege.value && 
-                    selectCourse.value && 
-                    selectCategory.value;
-    
+    const isValid = selectYear.value &&
+        selectRound.value &&
+        selectCollege.value &&
+        selectCourse.value &&
+        selectCategory.value;
+
     btnSearch.disabled = !isValid;
 }
 
@@ -95,15 +102,36 @@ async function initApp() {
         document.body.classList.add('modal-open');
     }
 
+    // Hide any previous errors/results and show loading spinner in placeholder
+    errorCard.classList.add('hidden');
+    resultsCard.classList.add('hidden');
+    btnRetryInit.classList.add('hidden');
+    
+    // Disable inputs during initialization
+    selectYear.disabled = true;
+    selectRound.disabled = true;
+    selectCourse.disabled = true;
+    selectCollege.disabled = true;
+    selectCategory.disabled = true;
+
+    resultsPlaceholder.innerHTML = `
+        <div class="spinner-ring"></div>
+        <h3>Connecting to server...</h3>
+        <p>Waking up the backend database instance. This may take up to a minute on the free hosting tier.</p>
+    `;
+    resultsPlaceholder.classList.remove('hidden');
+
     try {
         // Preload years
         const years = await fetchAPI('/api/years');
+        selectYear.innerHTML = `<option value="" disabled selected>Select Year</option>`;
         years.forEach(year => {
             const opt = document.createElement('option');
             opt.value = year;
             opt.textContent = year;
             selectYear.appendChild(opt);
         });
+        selectYear.disabled = false;
 
         // Preload categories sorted by preferred order
         const categories = await fetchAPI('/api/categories');
@@ -117,14 +145,22 @@ async function initApp() {
             return a.code.localeCompare(b.code);
         });
 
+        selectCategory.innerHTML = `<option value="" disabled selected>Select Category</option>`;
         categories.forEach(cat => {
             const opt = document.createElement('option');
             opt.value = cat.code;
             opt.textContent = `${cat.code} - ${cat.name}`;
             selectCategory.appendChild(opt);
         });
+
+        // Restore default placeholder when loaded successfully
+        resultsPlaceholder.innerHTML = DEFAULT_PLACEHOLDER_HTML;
     } catch (err) {
-        showError('Initialization Error', 'Failed to load initial data. Ensure the backend server is running.');
+        showError(
+            'Server Wake-up Timeout',
+            'The backend database is taking longer than expected to spin up or is currently offline. Please click the button below to retry connecting.',
+            true
+        );
     }
 }
 
@@ -145,7 +181,7 @@ selectYear.addEventListener('change', async () => {
         selectRound.innerHTML = `<option value="" disabled selected>Loading rounds...</option>`;
         const rounds = await fetchAPI(`/api/rounds?year=${year}`);
         await sleep(300 + Math.random() * 400); // random loading delay
-        
+
         selectRound.innerHTML = `<option value="" disabled selected>Select Allotment Round</option>`;
         rounds.forEach(round => {
             const opt = document.createElement('option');
@@ -176,7 +212,7 @@ selectRound.addEventListener('change', async () => {
         selectCourse.innerHTML = `<option value="" disabled selected>Loading courses...</option>`;
         const courses = await fetchAPI(`/api/courses?year=${year}&round=${encodeURIComponent(round)}`);
         await sleep(300 + Math.random() * 400); // random loading delay
-        
+
         selectCourse.innerHTML = `<option value="" disabled selected>Select Course</option>`;
         courses.forEach(course => {
             const opt = document.createElement('option');
@@ -207,7 +243,7 @@ selectCourse.addEventListener('change', async () => {
         selectCollege.innerHTML = `<option value="" disabled selected>Loading colleges...</option>`;
         const colleges = await fetchAPI(`/api/colleges?year=${year}&round=${encodeURIComponent(round)}&course=${encodeURIComponent(course)}`);
         await sleep(300 + Math.random() * 400); // random loading delay
-        
+
         selectCollege.innerHTML = `<option value="" disabled selected>Select College</option>`;
         colleges.forEach(col => {
             const opt = document.createElement('option');
@@ -241,12 +277,6 @@ btnSearch.addEventListener('click', async () => {
 
     if (!year || !round || !college || !course || !category) return;
 
-    const defaultPlaceholderHTML = `
-        <div class="placeholder-icon">🔍</div>
-        <h3>Ready to Search</h3>
-        <p>Select the year, round, college, course, and category on the left to display the last allotment rank.</p>
-    `;
-
     // Show temporary searching state in placeholder to trick user
     resultsPlaceholder.innerHTML = `
         <div class="placeholder-icon">⏳</div>
@@ -263,7 +293,7 @@ btnSearch.addEventListener('click', async () => {
         await sleep(400 + Math.random() * 500); // random loading delay
 
         // Restore placeholder content for future resets
-        resultsPlaceholder.innerHTML = defaultPlaceholderHTML;
+        resultsPlaceholder.innerHTML = DEFAULT_PLACEHOLDER_HTML;
         resultsPlaceholder.classList.add('hidden');
 
         // Update result display
@@ -283,14 +313,25 @@ btnSearch.addEventListener('click', async () => {
     }
 });
 
-function showError(title, msg) {
+function showError(title, msg, showRetry = false) {
     resultsPlaceholder.classList.add('hidden');
     resultsCard.classList.add('hidden');
-    
+
     errorTitle.textContent = title;
     errorMessage.textContent = msg;
     errorCard.classList.remove('hidden');
+
+    if (showRetry) {
+        btnRetryInit.classList.remove('hidden');
+    } else {
+        btnRetryInit.classList.add('hidden');
+    }
 }
+
+// Retry initialization click handler
+btnRetryInit.addEventListener('click', () => {
+    initApp();
+});
 
 // Disclaimer Acceptance click event handler
 btnAcceptDisclaimer.addEventListener('click', () => {

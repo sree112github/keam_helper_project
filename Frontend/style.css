@@ -576,3 +576,41 @@ body {
 body.modal-open {
     overflow: hidden;
 }
+
+/* Spinner and Retry Styling */
+.spinner-ring {
+    width: 48px;
+    height: 48px;
+    border: 3px dashed var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 2s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-retry {
+    background-color: var(--accent);
+    color: var(--bg-main);
+    padding: 0.75rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+.btn-retry:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-retry:active {
+    transform: scale(0.98);
+}
+

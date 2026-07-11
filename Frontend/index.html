@@ -3,13 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KEAM Last Rank Finder</title>
+    <title>KEAM Last Rank Finder | Official Cutoff & Last Rank Analysis</title>
     <meta name="description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://authentication-tutorial-01.web.app/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://authentication-tutorial-01.web.app/">
+    <meta property="og:title" content="KEAM Last Rank Finder | Cutoff & Last Rank Analysis">
+    <meta property="og:description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://authentication-tutorial-01.web.app/">
+    <meta property="twitter:title" content="KEAM Last Rank Finder | Cutoff & Last Rank Analysis">
+    <meta property="twitter:description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+
     <!-- Google Font Inter for modern premium typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "KEAM Last Rank Finder",
+      "url": "https://authentication-tutorial-01.web.app",
+      "description": "An interactive search tool to analyze and find KEAM engineering allotment cutoff ranks and last rank lists dynamically.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5."
+    }
+    </script>
+</head>
 <body>
     <!-- Disclaimer Modal Overlay -->
     <div id="disclaimer-modal" class="disclaimer-modal hidden">
@@ -151,6 +181,7 @@
                     <div class="error-icon">⚠️</div>
                     <h3 id="error-title">No Rank Found</h3>
                     <p id="error-message">We couldn't find a rank for the specified category. It's likely that no seats were allotted for this category in the selected round/course.</p>
+                    <button id="btn-retry-init" type="button" class="btn btn-retry hidden">Retry Connection</button>
                 </div>
             </section>
         </main>

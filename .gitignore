@@ -5,7 +5,6 @@ Backend/.env
 Frontend/.env
 
 # Data files (ignored)
-Backend/category_info.json
 Backend/rank_info.json
 
 # Go build outputs and binary files
