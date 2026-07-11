@@ -89,13 +89,16 @@ func main() {
 	service := rank.NewService(repo, dbPool)
 	controller := rank.NewController(service)
 
-	// 5. Register Routes
+		// 5. Register Routes
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status":  "healthy",
 			"message": "pong",
 			"time":    time.Now().Format(time.RFC3339),
 		})
+	})
+	r.HEAD("/ping", func(c *gin.Context) {
+		c.Status(200)
 	})
 	rank.RegisterRoutes(r, controller)
 

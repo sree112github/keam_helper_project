@@ -1,7 +1,7 @@
 // KEAM Last Rank Finder - Frontend Interactivity Script
 
-// Replace this with your actual Render backend URL (e.g., https://entrance-helper-backend.onrender.com)
-const RENDER_BACKEND_URL = 'https://YOUR-RENDER-BACKEND-URL.onrender.com';
+// Replace this with your actual Render backend URL
+const RENDER_BACKEND_URL = 'https://keam-helper-project.onrender.com';
 
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.origin.startsWith('file://')
     ? 'http://localhost:8080'
