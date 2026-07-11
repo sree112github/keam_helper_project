@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEAM Last Rank Finder</title>
+    <meta name="description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+    <!-- Google Font Inter for modern premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+<body>
+    <!-- Disclaimer Modal Overlay -->
+    <div id="disclaimer-modal" class="disclaimer-modal hidden">
+        <div class="disclaimer-modal-content">
+            <h2 class="disclaimer-modal-title">⚠️ Disclaimer / മുന്നറിയിപ്പ്</h2>
+            
+            <div class="warning-section en">
+                <h4>⚠️ Disclaimer</h4>
+                <p>This website is <strong>NOT</strong> an official CEE Kerala website.</p>
+                <p>The data shown here was extracted from the official Last Rank PDF using OCR and AI-assisted processing.</p>
+                <p>Although every effort has been made to ensure accuracy, OCR or AI extraction errors may still exist.</p>
+                <p>Always verify admission-related information using the official CEE Kerala Last Rank PDF before making any decision.</p>
+            </div>
+            
+            <div class="warning-divider-horizontal"></div>
+            
+            <div class="warning-section ml">
+                <h4>⚠️ മുന്നറിയിപ്പ്</h4>
+                <p>ഈ വെബ്സൈറ്റ് CEE കേരളയുടെ ഔദ്യോഗിക വെബ്സൈറ്റ് അല്ല.</p>
+                <p>ഇവിടെ കാണുന്ന വിവരങ്ങൾ ഔദ്യോഗിക Last Rank PDF ഫയലിൽ നിന്ന് OCR, AI സഹായത്തോടെ ശേഖരിക്കുകയും ക്രമീകരിക്കുകയും ചെയ്തതാണ്.</p>
+                <p>OCR അല്ലെങ്കിൽ AI പ്രോസസ്സിംഗിലെ പിശകുകൾ കാരണം ചില വിവരങ്ങൾ തെറ്റായിരിക്കാനുള്ള സാധ്യതയുണ്ട്.</p>
+                <p>പ്രവേശനവുമായി ബന്ധപ്പെട്ട അന്തിമ തീരുമാനങ്ങൾ എടുക്കുന്നതിന് മുമ്പ് CEE കേരളയുടെ ഔദ്യോഗിക Last Rank PDF നിർബന്ധമായും പരിശോധിക്കുക.</p>
+            </div>
+            
+            <div class="disclaimer-actions">
+                <button id="btn-accept-disclaimer" type="button" class="btn btn-accept">
+                    I Accept and Proceed / ഞാൻ അംഗീകരിക്കുന്നു
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="header-top">
+                <h1 class="app-title">KEAM Last Rank Finder</h1>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light/dark mode">🌗</button>
+            </div>
+            <div class="official-links">
+                <a id="link-official-site" href="https://cee.kerala.gov.in/cee/index.php" target="_blank" rel="noopener noreferrer" class="link-btn">
+                    Official Website
+                </a>
+                <a id="link-official-pdf" href="https://www.cee.kerala.gov.in/keam2025/list/lastrank/last_rank_engg_p2_final.pdf" target="_blank" rel="noopener noreferrer" class="link-btn secondary">
+                    Official Last Rank PDF
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Search Panel -->
+            <section class="card search-card">
+                <h2 class="card-title">Search Cutoff Rank</h2>
+                <form id="search-form" class="search-form" onsubmit="event.preventDefault();">
+                    <!-- Year Dropdown -->
+                    <div class="form-group">
+                        <label for="select-year">Select Year</label>
+                        <select id="select-year" class="form-select">
+                            <option value="" disabled selected>Select Year</option>
+                        </select>
+                    </div>
+
+                    <!-- Round Dropdown -->
+                    <div class="form-group">
+                        <label for="select-round">Select Allotment Round</label>
+                        <select id="select-round" class="form-select" disabled>
+                            <option value="" disabled selected>Select Allotment Round</option>
+                        </select>
+                    </div>
+
+                    <!-- Course Dropdown -->
+                    <div class="form-group">
+                        <label for="select-course">Select Course</label>
+                        <select id="select-course" class="form-select" disabled>
+                            <option value="" disabled selected>Select Course</option>
+                        </select>
+                    </div>
+
+                    <!-- College Dropdown -->
+                    <div class="form-group">
+                        <label for="select-college">Select College</label>
+                        <select id="select-college" class="form-select" disabled>
+                            <option value="" disabled selected>Select College</option>
+                        </select>
+                    </div>
+
+                    <!-- Category Dropdown -->
+                    <div class="form-group">
+                        <label for="select-category">Select Category</label>
+                        <select id="select-category" class="form-select" disabled>
+                            <option value="" disabled selected>Select Category</option>
+                        </select>
+                    </div>
+
+                    <!-- Search Action -->
+                    <button id="btn-search" type="button" class="btn btn-search" disabled>Search Last Rank</button>
+                </form>
+            </section>
+
+            <!-- Results Panel -->
+            <section class="results-container">
+                <!-- Welcome/State Box -->
+                <div id="results-placeholder" class="card results-placeholder">
+                    <div class="placeholder-icon">🔍</div>
+                    <h3>Ready to Search</h3>
+                    <p>Select the year, round, college, course, and category on the left to display the last allotment rank.</p>
+                </div>
+
+                <!-- Active Rank Result -->
+                <div id="results-card" class="card results-card hidden">
+                    <span class="results-badge">Allotment Cutoff</span>
+                    <div class="rank-display">
+                        <span class="rank-label">LAST RANK</span>
+                        <h2 id="result-rank-value" class="rank-value">--</h2>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span class="detail-label">College</span>
+                            <span id="result-college" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Course</span>
+                            <span id="result-course" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Round</span>
+                            <span id="result-round" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Category</span>
+                            <span id="result-category" class="detail-value">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-card" class="card error-card hidden">
+                    <div class="error-icon">⚠️</div>
+                    <h3 id="error-title">No Rank Found</h3>
+                    <p id="error-message">We couldn't find a rank for the specified category. It's likely that no seats were allotted for this category in the selected round/course.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Warnings / Disclaimers Section -->
+        <footer class="app-footer">
+            <div class="warning-box">
+                <div class="warning-section en">
+                    <h4>⚠️ Disclaimer</h4>
+                    <p>This website is <strong>NOT</strong> an official CEE Kerala website.</p>
+                    <p>The data shown here was extracted from the official Last Rank PDF using OCR and AI-assisted processing.</p>
+                    <p>Although every effort has been made to ensure accuracy, OCR or AI extraction errors may still exist.</p>
+                    <p>Always verify admission-related information using the official CEE Kerala Last Rank PDF before making any decision.</p>
+                </div>
+                <div class="warning-divider"></div>
+                <div class="warning-section ml">
+                    <h4>⚠️ മുന്നറിയിപ്പ്</h4>
+                    <p>ഈ വെബ്സൈറ്റ് CEE കേരളയുടെ ഔദ്യോഗിക വെബ്സൈറ്റ് അല്ല.</p>
+                    <p>ഇവിടെ കാണുന്ന വിവരങ്ങൾ ഔദ്യോഗിക Last Rank PDF ഫയലിൽ നിന്ന് OCR, AI സഹായത്തോടെ ശേഖരിക്കുകയും ക്രമീകരിക്കുകയും ചെയ്തതാണ്.</p>
+                    <p>OCR അല്ലെങ്കിൽ AI പ്രോസസ്സിംഗിലെ പിശകുകൾ കാരണം ചില വിവരങ്ങൾ തെറ്റായിരിക്കാനുള്ള സാധ്യതയുണ്ട്.</p>
+                    <p>പ്രവേശനവുമായി ബന്ധപ്പെട്ട അന്തിമ തീരുമാനങ്ങൾ എടുക്കുന്നതിന് മുമ്പ് CEE കേരളയുടെ ഔദ്യോഗിക Last Rank PDF നിർബന്ധമായും പരിശോധിക്കുക.</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 KEAM Last Rank Finder. Designed with visual excellence.</p>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

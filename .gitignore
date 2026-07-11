@@ -1,0 +1,22 @@
+# Sensitive configuration files
+.env
+*.env
+Backend/.env
+Frontend/.env
+
+# Data files (ignored)
+Backend/category_info.json
+Backend/rank_info.json
+
+# Go build outputs and binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+Backend/tmp/
+Backend/main
+
+# OS files
+.DS_Store
+Thumbs.db
