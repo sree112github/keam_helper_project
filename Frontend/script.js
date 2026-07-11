@@ -1,7 +1,11 @@
 // KEAM Last Rank Finder - Frontend Interactivity Script
 
-// Automatic backend base detection (works locally or served directly from the Go app)
-const API_BASE = window.location.origin.startsWith('file://') ? 'http://localhost:8080' : window.location.origin;
+// Replace this with your actual Render backend URL (e.g., https://entrance-helper-backend.onrender.com)
+const RENDER_BACKEND_URL = 'https://YOUR-RENDER-BACKEND-URL.onrender.com';
+
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.origin.startsWith('file://')
+    ? 'http://localhost:8080'
+    : RENDER_BACKEND_URL;
 
 // DOM Elements
 const selectYear = document.getElementById('select-year');
