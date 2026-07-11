@@ -90,6 +90,13 @@ func main() {
 	controller := rank.NewController(service)
 
 	// 5. Register Routes
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "healthy",
+			"message": "pong",
+			"time":    time.Now().Format(time.RFC3339),
+		})
+	})
 	rank.RegisterRoutes(r, controller)
 
 	// 6. Serve static files from Frontend directory
