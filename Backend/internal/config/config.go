@@ -62,8 +62,11 @@ func LoadConfig() *Config {
 		// If DB_HOST is empty and PORT is the DB port (5432), we must NOT bind the Go web server to 5432.
 		// We'll set the server Port to "8080".
 		if cfg.Port == dbPort {
+			log.Printf("Configuration Warning: PORT env var is set to %q and DB_HOST is empty. Assuming legacy .env where PORT is the database port. Overriding web server port to \"8080\" to prevent conflicts.\n", dbPort)
 			cfg.Port = "8080"
 		}
+	} else {
+		log.Printf("Loaded database config using standard DB_HOST environment variables.\n")
 	}
 
 	cfg.DBHost = dbHost
