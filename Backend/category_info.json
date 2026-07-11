@@ -1,104 +1,104 @@
 {
- "Category": [
- {
- "code": "BH",
- "name": "Other Backward Hindu"
- },
- {
- "code": "BX",
- "name": "Other Backward Christian"
- },
- {
- "code": "CC",
- "name": "NCC Quota"
- },
- {
- "code": "DK",
- "name": "Dependent of Defence Personnel Killed / Missing / Disabled"
- },
- {
- "code": "DV",
- "name": "Dheevara and related communities"
- },
- {
- "code": "EW",
- "name": "Economically Weaker Section (EWS)"
- },
- {
- "code": "EZ",
- "name": "Ezhava, Thiyya and Billava"
- },
- {
- "code": "FW",
- "name": "Fishermen Community Quota"
- },
- {
- "code": "HR",
- "name": "Dependent of Defence Personnel Died in-Harness"
- },
- {
- "code": "KN",
- "name": "Kudumbi"
- },
- {
- "code": "KU",
- "name": "Kusavan and related communities"
- },
- {
- "code": "LA",
- "name": "Latin Catholic and Anglo Indian"
- },
- {
- "code": "LG",
- "name": "Children of Farm Labourers of KAU"
- },
- {
- "code": "MM",
- "name": "Muslim Minority Quota"
- },
- {
- "code": "MU",
- "name": "Muslim"
- },
- {
- "code": "PD",
- "name": "Persons with Disabilities"
- },
- {
- "code": "PI",
- "name": "Sports Quota - Individual Event"
- },
- {
- "code": "PT",
- "name": "Sports Quota - Team Event"
- },
- {
- "code": "RP",
- "name": "Children / Dependent of Personnel Serving in Paramilitary Forces (CAPF)"
- },
- {
- "code": "SC",
- "name": "Scheduled Caste"
- },
- {
- "code": "SD",
- "name": "Children of Serving Defence Personnel from Kerala"
- },
- {
- "code": "SM",
- "name": "State Merit"
- },
- {
- "code": "ST",
- "name": "Scheduled Tribe"
- },
- {
- "code": "VK",
- "name": "Viswakarma and related communities"
- },
- {
- "code": "XS",
- "name": "Ex-Serviceman / Children of Ex-Serviceman"
- }
- ]
+    "Category": [
+        {
+            "code": "BH",
+            "name": "Other Backward Hindu"
+        },
+        {
+            "code": "BX",
+            "name": "Other Backward Christian"
+        },
+        {
+            "code": "CC",
+            "name": "NCC Quota"
+        },
+        {
+            "code": "DK",
+            "name": "Dependent of Defence Personnel Killed / Missing / Disabled"
+        },
+        {
+            "code": "DV",
+            "name": "Dheevara and related communities"
+        },
+        {
+            "code": "EW",
+            "name": "Economically Weaker Section (EWS)"
+        },
+        {
+            "code": "EZ",
+            "name": "Ezhava"
+        },
+        {
+            "code": "FW",
+            "name": "Fishermen Community Quota"
+        },
+        {
+            "code": "HR",
+            "name": "Dependent of Defence Personnel Died in-Harness"
+        },
+        {
+            "code": "KN",
+            "name": "Kudumbi"
+        },
+        {
+            "code": "KU",
+            "name": "Kusavan and related communities"
+        },
+        {
+            "code": "LA",
+            "name": "Latin Catholic and Anglo Indian"
+        },
+        {
+            "code": "LG",
+            "name": "Children of Farm Labourers of KAU"
+        },
+        {
+            "code": "MM",
+            "name": "Muslim Minority Quota"
+        },
+        {
+            "code": "MU",
+            "name": "Muslim"
+        },
+        {
+            "code": "PD",
+            "name": "Persons with Disabilities"
+        },
+        {
+            "code": "PI",
+            "name": "Sports Quota - Individual Event"
+        },
+        {
+            "code": "PT",
+            "name": "Sports Quota - Team Event"
+        },
+        {
+            "code": "RP",
+            "name": "Children / Dependent of Personnel Serving in Paramilitary Forces (CAPF)"
+        },
+        {
+            "code": "SC",
+            "name": "Scheduled Caste"
+        },
+        {
+            "code": "SD",
+            "name": "Children of Serving Defence Personnel from Kerala"
+        },
+        {
+            "code": "SM",
+            "name": "State Merit"
+        },
+        {
+            "code": "ST",
+            "name": "Scheduled Tribe"
+        },
+        {
+            "code": "VK",
+            "name": "Viswakarma and related communities"
+        },
+        {
+            "code": "XS",
+            "name": "Ex-Serviceman / Children of Ex-Serviceman"
+        }
+    ]
 }
