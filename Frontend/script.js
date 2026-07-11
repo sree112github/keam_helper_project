@@ -58,22 +58,41 @@ const apiCache = {};
 // Helper to pause execution with random delay (tricks user and spaces requests)
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// API call wrapper with caching to reduce database load and save bandwidth
-async function fetchAPI(endpoint) {
+// API call wrapper with caching and automatic retry logic to handle server cold-starts
+async function fetchAPI(endpoint, retries = 5, delay = 5000) {
     if (apiCache[endpoint]) {
         return JSON.parse(JSON.stringify(apiCache[endpoint]));
     }
-    try {
-        const response = await fetch(`${API_BASE}${endpoint}`);
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-            throw new Error(result.message || 'API request failed');
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const response = await fetch(`${API_BASE}${endpoint}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.message || 'API request failed');
+            }
+            apiCache[endpoint] = result.data;
+            return result.data;
+        } catch (err) {
+            console.warn(`Attempt ${attempt} to fetch ${endpoint} failed:`, err);
+            if (attempt === retries) {
+                console.error(`Max retries reached for endpoint ${endpoint}`);
+                throw err;
+            }
+            
+            // If we are performing the initial server/database wakeup, update the loading status text dynamically
+            const statusText = document.querySelector('#results-placeholder h3');
+            const statusDesc = document.querySelector('#results-placeholder p');
+            if (statusText && endpoint === '/api/years') {
+                statusText.textContent = `Connecting to server (Attempt ${attempt + 1}/${retries})...`;
+                statusDesc.textContent = `Waking up the backend database. This may take up to a minute on the free hosting tier. Retrying in ${delay / 1000} seconds...`;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
-        apiCache[endpoint] = result.data;
-        return result.data;
-    } catch (err) {
-        console.error(`Error fetching endpoint ${endpoint}:`, err);
-        throw err;
     }
 }
 

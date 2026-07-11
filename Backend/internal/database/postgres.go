@@ -38,22 +38,42 @@ func ConnectDB(cfg *config.Config) (*pgxpool.Pool, error) {
 	poolConfig.MaxConnIdleTime = 30 * time.Minute
 	poolConfig.HealthCheckPeriod = 1 * time.Minute
 
-	// Establish connection pool
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// Establish connection pool with retries to handle cold starts (e.g. Supabase wake-up)
+	var pool *pgxpool.Pool
+	maxAttempts := 10
+	var lastErr error
 
-	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
-	if err != nil {
-		return nil, fmt.Errorf("unable to create connection pool: %w", err)
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		if attempt > 1 {
+			log.Printf("Retrying database connection (attempt %d/%d) in 5 seconds...", attempt, maxAttempts)
+			time.Sleep(5 * time.Second)
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		
+		var err error
+		pool, err = pgxpool.NewWithConfig(ctx, poolConfig)
+		if err != nil {
+			lastErr = fmt.Errorf("unable to create connection pool: %w", err)
+			cancel()
+			log.Printf("Database pool creation failed on attempt %d: %v", attempt, err)
+			continue
+		}
+
+		// Ping database to verify connection
+		if err := pool.Ping(ctx); err != nil {
+			pool.Close()
+			lastErr = fmt.Errorf("unable to ping database: %w", err)
+			cancel()
+			log.Printf("Database ping failed on attempt %d: %v", attempt, err)
+			continue
+		}
+
+		cancel()
+		log.Printf("Successfully connected to database %s at %s:%s on attempt %d\n", cfg.DBName, cfg.DBHost, cfg.DBPort, attempt)
+		Pool = pool
+		return pool, nil
 	}
 
-	// Ping database to verify connection
-	if err := pool.Ping(ctx); err != nil {
-		pool.Close()
-		return nil, fmt.Errorf("unable to ping database: %w", err)
-	}
-
-	log.Printf("Successfully connected to database %s at %s:%s\n", cfg.DBName, cfg.DBHost, cfg.DBPort)
-	Pool = pool
-	return pool, nil
+	return nil, fmt.Errorf("database connection failed after %d attempts: %w", maxAttempts, lastErr)
 }
