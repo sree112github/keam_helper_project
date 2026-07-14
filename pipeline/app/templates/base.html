@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}KEAM OCR Pipeline{% endblock %}</title>
+  <meta name="description" content="{% block description %}KEAM Cutoff Rank OCR Processing System — extract, review, and insert rank data from PDFs{% endblock %}" />
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css?v=2" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <div class="brand-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+      <div>
+        <div class="brand-title">KEAM OCR Pipeline</div>
+        <div class="brand-subtitle">Cutoff Rank Extractor</div>
+      </div>
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <!-- OCR Mode Switcher -->
+      <div class="ocr-mode-selector d-flex align-items-center bg-dark bg-opacity-25 rounded-pill p-1 border border-secondary border-opacity-25 me-2" id="ocrSelectorContainer">
+        <span class="text-muted small px-2 d-none d-md-inline" style="font-size: 0.75rem;">Engine:</span>
+        <button type="button" id="btnOllama" class="btn btn-sm btn-pill text-white py-1 px-3 active-pill" onclick="selectOcrProvider('ollama')" style="font-size: 0.8rem; border-radius: 50rem; transition: all 0.2s;">
+          <i class="bi bi-cpu me-1"></i>Ollama
+        </button>
+        <button type="button" id="btnGemini" class="btn btn-sm btn-pill text-white py-1 px-3" onclick="selectOcrProvider('gemini')" style="font-size: 0.8rem; border-radius: 50rem; transition: all 0.2s;">
+          <i class="bi bi-google me-1"></i>Gemini
+        </button>
+      </div>
+
+      <a href="/" class="nav-link-pill {% if request.url.path == '/' %}active{% endif %}">
+        <i class="bi bi-upload"></i> Upload
+      </a>
+      <a href="/api/health" target="_blank" class="nav-link-pill">
+        <i class="bi bi-heart-pulse"></i> Health
+      </a>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Toast container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 9999;"></div>
+
+<!-- Main content -->
+<main class="main-content">
+  {% if error %}
+  <div class="container py-5">
+    <div class="alert-card error">
+      <i class="bi bi-exclamation-triangle-fill fs-1 mb-3"></i>
+      <h3>{{ error }}</h3>
+      <a href="/" class="btn btn-primary mt-3">Go Home</a>
+    </div>
+  </div>
+  {% else %}
+  {% block content %}{% endblock %}
+  {% endif %}
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Global toast function
+function showToast(message, type = 'info') {
+  const colors = {
+    success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6'
+  };
+  const icons = {
+    success: 'bi-check-circle-fill', error: 'bi-x-circle-fill',
+    warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill'
+  };
+  const toastEl = document.createElement('div');
+  toastEl.className = 'toast align-items-center border-0 show';
+  toastEl.style.cssText = `background:${colors[type]};color:#fff;min-width:300px`;
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2">
+        <i class="bi ${icons[type]}"></i> ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>`;
+  document.getElementById('toastContainer').appendChild(toastEl);
+  new bootstrap.Toast(toastEl, { delay: 4000 }).show();
+  toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+}
+
+// Client-side OCR configuration manager
+async function loadOcrSettings() {
+  try {
+    const resp = await fetch('/api/settings');
+    if (resp.ok) {
+      const data = await resp.json();
+      updateOcrSelectorUI(data.ocr_provider);
+    }
+  } catch (err) {
+    console.error("Failed to load OCR settings:", err);
+  }
+}
+
+async function selectOcrProvider(provider) {
+  try {
+    const resp = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ocr_provider: provider })
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      updateOcrSelectorUI(data.ocr_provider);
+      showToast(`Switched OCR engine to ${data.ocr_provider === 'gemini' ? 'Gemini' : 'Ollama'}.`, 'success');
+    } else {
+      const errData = await resp.json();
+      showToast(errData.detail || 'Failed to switch OCR provider', 'error');
+    }
+  } catch (err) {
+    showToast('Failed to switch OCR provider: ' + err.message, 'error');
+  }
+}
+
+function updateOcrSelectorUI(provider) {
+  const btnOllama = document.getElementById('btnOllama');
+  const btnGemini = document.getElementById('btnGemini');
+  if (!btnOllama || !btnGemini) return;
+  
+  if (provider === 'gemini') {
+    btnOllama.classList.remove('active-pill');
+    btnGemini.classList.add('active-pill');
+  } else {
+    btnGemini.classList.remove('active-pill');
+    btnOllama.classList.add('active-pill');
+  }
+  
+  // Also keep description in sync if it's there
+  const infoDesc = document.querySelector('.info-desc');
+  if (infoDesc && infoDesc.textContent.includes('OCR runs')) {
+    if (provider === 'gemini') {
+      infoDesc.textContent = 'OCR runs securely via Gemini API';
+    } else {
+      infoDesc.textContent = 'OCR runs on your local GPU via Ollama';
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadOcrSettings();
+});
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

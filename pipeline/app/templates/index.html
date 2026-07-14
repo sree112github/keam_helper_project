@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Upload — KEAM OCR Pipeline{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Hero -->
+  <div class="text-center mb-5">
+    <div class="hero-icon mb-3"><i class="bi bi-file-earmark-arrow-up-fill"></i></div>
+    <h1 class="hero-title">KEAM Cutoff Rank Extractor</h1>
+    <p class="hero-subtitle">Upload KEAM PDF documents or images. The system extracts rank tables using AI vision — fully offline.</p>
+  </div>
+
+  <!-- Upload Card -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card-glass">
+        <div class="card-glass-body">
+          <form id="uploadForm">
+            <!-- Drop Zone -->
+            <div class="drop-zone" id="dropZone">
+              <div class="drop-zone-inner">
+                <i class="bi bi-cloud-arrow-up drop-icon"></i>
+                <h3 class="drop-title">Drop files here</h3>
+                <p class="drop-sub">PDF documents or PNG/JPG images</p>
+                <label for="fileInput" class="btn btn-primary btn-lg mt-2">
+                  <i class="bi bi-folder2-open me-2"></i>Browse Files
+                </label>
+                <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg" class="d-none" />
+              </div>
+            </div>
+
+            <!-- File List -->
+            <div id="fileList" class="file-list mt-4 d-none"></div>
+
+            <!-- Upload Button -->
+            <div class="d-flex justify-content-between align-items-center mt-4" id="actionRow" style="display:none!important">
+              <div class="text-muted small" id="fileSummary"></div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary" id="clearBtn">
+                  <i class="bi bi-trash me-1"></i>Clear
+                </button>
+                <button type="submit" class="btn btn-primary btn-lg px-5" id="uploadBtn">
+                  <span class="btn-text"><i class="bi bi-upload me-2"></i>Upload & Process</span>
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Info cards -->
+      <div class="row g-3 mt-4">
+        <div class="col-md-4">
+          <div class="info-card">
+            <i class="bi bi-shield-lock-fill info-icon"></i>
+            <div class="info-title">100% Offline</div>
+            <div class="info-desc">OCR runs on your local GPU via Ollama</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-card">
+            <i class="bi bi-eye-fill info-icon"></i>
+            <div class="info-title">Review First</div>
+            <div class="info-desc">Preview, edit, delete before inserting to DB</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-card">
+            <i class="bi bi-database-fill-check info-icon"></i>
+            <div class="info-title">Smart Upsert</div>
+            <div class="info-desc">Detects new vs existing records automatically</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/upload.js?v=2"></script>
+{% endblock %}

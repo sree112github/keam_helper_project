@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Processing — KEAM OCR Pipeline{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+
+      <div class="text-center mb-4">
+        <div class="hero-icon mb-3"><i class="bi bi-cpu-fill"></i></div>
+        <h1 class="hero-title">Processing Documents</h1>
+        <p class="hero-subtitle text-muted">AI is extracting rank data from your documents. This may take several minutes depending on the number of pages.</p>
+      </div>
+
+      <div class="card-glass">
+        <div class="card-glass-body">
+
+          <!-- Progress bar -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="fw-semibold" id="progressLabel">Connecting to pipeline...</span>
+              <span class="text-muted" id="progressCount">0 / 0</span>
+            </div>
+            <div class="progress progress-custom">
+              <div class="progress-bar progress-bar-striped progress-bar-animated"
+                   id="progressBar" role="progressbar" style="width:0%"></div>
+            </div>
+          </div>
+
+          <!-- Status log -->
+          <div class="status-log" id="statusLog">
+            <div class="log-entry text-muted">
+              <i class="bi bi-arrow-right-circle me-2"></i>Waiting to start...
+            </div>
+          </div>
+
+          <!-- Stats row (shown after completion) -->
+          <div class="stats-row mt-4 d-none" id="statsRow">
+            <div class="stat-pill">
+              <span class="stat-label">Total Records</span>
+              <span class="stat-value" id="statTotal">—</span>
+            </div>
+            <div class="stat-pill success">
+              <span class="stat-label">Valid</span>
+              <span class="stat-value" id="statValid">—</span>
+            </div>
+          </div>
+
+          <!-- Action button (shown after completion) -->
+          <div class="text-center mt-4 d-none" id="actionDiv">
+            <a href="/preview/{{ job_id }}" class="btn btn-primary btn-lg px-5" id="reviewBtn">
+              <i class="bi bi-table me-2"></i>Review Extracted Data
+            </a>
+          </div>
+
+          <!-- Cancel button (shown during processing) -->
+          <div class="text-center mt-4" id="cancelDiv">
+            <button class="btn btn-outline-danger" id="cancelBtn">
+              <i class="bi bi-x-circle me-1"></i>Cancel Processing
+            </button>
+          </div>
+
+          <!-- Error state -->
+          <div class="alert alert-danger mt-4 d-none" id="errorDiv">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span id="errorMsg">An error occurred.</span>
+            <div class="mt-2">
+              <a href="/" class="btn btn-sm btn-outline-danger">Start Over</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const JOB_ID = "{{ job_id }}";
+</script>
+<script src="/static/js/processing.js"></script>
+{% endblock %}
