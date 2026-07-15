@@ -13,4 +13,5 @@ func RegisterRoutes(r *gin.Engine, ctrl *Controller) {
 	r.GET("/api/courses", ctrl.GetCourses)
 	r.GET("/api/categories", ctrl.GetCategories)
 	r.GET("/api/rank", ctrl.GetRank)
+	r.GET("/api/predict", ctrl.PredictColleges)
 }

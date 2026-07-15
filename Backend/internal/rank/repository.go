@@ -172,3 +172,68 @@ func (r *Repository) GetRank(ctx context.Context, year int, round string, colleg
 		Rank:        *rankVal,
 	}, nil
 }
+
+// GetCoursesByYear retrieves distinct courses available for a selected year across all rounds.
+func (r *Repository) GetCoursesByYear(ctx context.Context, year int) ([]string, error) {
+	rows, err := r.db.Query(ctx, `
+		SELECT DISTINCT course 
+		FROM keam_cutoff_ranks 
+		WHERE year = $1 
+		ORDER BY course ASC
+	`, year)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query courses by year: %w", err)
+	}
+	defer rows.Close()
+
+	var courses []string
+	for rows.Next() {
+		var course string
+		if err := rows.Scan(&course); err != nil {
+			return nil, fmt.Errorf("failed to scan course: %w", err)
+		}
+		courses = append(courses, course)
+	}
+	return courses, nil
+}
+
+// PredictColleges returns a list of colleges where the user's rank is eligible based on the cutoff rank.
+func (r *Repository) PredictColleges(ctx context.Context, year int, round string, course string, category string, rank int) ([]PredictionDTO, error) {
+	var rows pgx.Rows
+	var err error
+
+	if round != "" {
+		rows, err = r.db.Query(ctx, `
+			SELECT college_code, college_name, round, (ranks->>$1)::integer as cutoff_rank
+			FROM keam_cutoff_ranks 
+			WHERE year = $2 AND round = $3 AND course = $4 AND (ranks->>$1)::integer >= $5
+			ORDER BY (ranks->>$1)::integer ASC
+		`, category, year, round, course, rank)
+	} else {
+		rows, err = r.db.Query(ctx, `
+			SELECT college_code, college_name, round, (ranks->>$1)::integer as cutoff_rank
+			FROM keam_cutoff_ranks 
+			WHERE year = $2 AND course = $3 AND (ranks->>$1)::integer >= $4
+			ORDER BY (ranks->>$1)::integer ASC
+		`, category, year, course, rank)
+	}
+	
+	if err != nil {
+		return nil, fmt.Errorf("failed to predict colleges: %w", err)
+	}
+	defer rows.Close()
+
+	var predictions []PredictionDTO
+	for rows.Next() {
+		var p PredictionDTO
+		var cutoff *int
+		if err := rows.Scan(&p.CollegeCode, &p.CollegeName, &p.Round, &cutoff); err != nil {
+			return nil, fmt.Errorf("failed to scan prediction: %w", err)
+		}
+		if cutoff != nil {
+			p.CutoffRank = *cutoff
+			predictions = append(predictions, p)
+		}
+	}
+	return predictions, nil
+}

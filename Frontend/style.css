@@ -641,3 +641,185 @@ body.modal-open {
 }
 
 
+/* Tabs Container */
+.tabs-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--accent-glow);
+}
+
+.tab-btn.active {
+    color: var(--accent);
+    background-color: var(--accent-glow);
+}
+
+/* Attention Grabber Styles */
+.badge-new {
+    background-color: var(--error);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 10px var(--error-bg);
+}
+
+.attention-pulse {
+    animation: pulse-attention 2s infinite;
+}
+
+@keyframes pulse-attention {
+    0% {
+        box-shadow: 0 0 0 0 hsla(354, 70%, 54%, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 8px hsla(354, 70%, 54%, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 hsla(354, 70%, 54%, 0);
+    }
+}
+
+/* Predictor Note */
+.predictor-note {
+    background-color: var(--accent-glow);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.predictor-note p {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Predictor Input */
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-stack);
+    font-size: 0.9375rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-input:focus {
+    border-color: var(--border-color-focus);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.form-input:disabled {
+    background-color: var(--bg-input-disabled);
+    color: var(--text-muted);
+    border-color: transparent;
+    cursor: not-allowed;
+}
+
+/* Results Table */
+.predict-results-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.results-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.predict-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.predict-table th, .predict-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.predict-table th {
+    background-color: var(--bg-main);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+}
+
+.predict-table tbody tr {
+    transition: background-color 0.15s;
+}
+
+.predict-table tbody tr:hover {
+    background-color: var(--bg-card-hover);
+}
+
+/* Social Links */
+.social-links {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.social-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+    margin: 0 0.5rem;
+}
+
+.social-link:hover {
+    color: var(--accent);
+}
+
+/* Highlight Cutoff Rank in Predictor Table */
+.highlight-rank {
+    color: var(--success);
+    font-weight: 800;
+    font-size: 1.05rem;
+    background: hsla(142, 70%, 50%, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid hsla(142, 70%, 50%, 0.2);
+    display: inline-block;
+    box-shadow: 0 0 10px hsla(142, 70%, 50%, 0.1);
+}

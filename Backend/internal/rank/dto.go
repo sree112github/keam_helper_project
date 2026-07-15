@@ -34,3 +34,12 @@ type CategoryDTO struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }
+
+// PredictionDTO represents a predicted college and its cutoff rank.
+type PredictionDTO struct {
+	CollegeCode string `json:"college_code"`
+	CollegeName string `json:"college_name"`
+	Round       string `json:"round"`
+	CutoffRank  int    `json:"cutoff_rank"`
+}
+

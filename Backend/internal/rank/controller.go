@@ -94,14 +94,14 @@ func (ctrl *Controller) GetColleges(c *gin.Context) {
 	common.SendSuccess(c, colleges)
 }
 
-// GetCourses retrieves courses offered under a year and allotment round, optionally filtered by college.
+// GetCourses retrieves courses offered under a year and optionally filtered by allotment round and college.
 func (ctrl *Controller) GetCourses(c *gin.Context) {
 	yearStr := c.Query("year")
-	round := c.Query("round")
+	round := c.Query("round")     // now optional
 	college := c.Query("college") // now optional
 
-	if yearStr == "" || round == "" {
-		common.SendFailure(c, http.StatusBadRequest, "Missing required query parameters: year and round")
+	if yearStr == "" {
+		common.SendFailure(c, http.StatusBadRequest, "Missing required query parameter: year")
 		return
 	}
 
@@ -111,7 +111,14 @@ func (ctrl *Controller) GetCourses(c *gin.Context) {
 		return
 	}
 
-	courses, err := ctrl.service.GetCourses(c.Request.Context(), year, round, college)
+	var courses []string
+	if round == "" {
+		// If no round provided, fetch all courses for the year
+		courses, err = ctrl.service.GetCoursesByYear(c.Request.Context(), year)
+	} else {
+		courses, err = ctrl.service.GetCourses(c.Request.Context(), year, round, college)
+	}
+
 	if err != nil {
 		common.SendFailure(c, http.StatusInternalServerError, "Failed to retrieve courses: "+err.Error())
 		return
@@ -163,4 +170,38 @@ func (ctrl *Controller) GetRank(c *gin.Context) {
 	}
 
 	common.SendSuccess(c, rankResp)
+}
+
+// PredictColleges predicts eligible colleges based on the user's rank.
+func (ctrl *Controller) PredictColleges(c *gin.Context) {
+	yearStr := c.Query("year")
+	course := c.Query("course")
+	category := c.Query("category")
+	rankStr := c.Query("rank")
+	round := c.Query("round") // optional round filter
+
+	if yearStr == "" || course == "" || category == "" || rankStr == "" {
+		common.SendFailure(c, http.StatusBadRequest, "Missing required query parameters: year, course, category, and rank")
+		return
+	}
+
+	year, err := strconv.Atoi(yearStr)
+	if err != nil {
+		common.SendFailure(c, http.StatusBadRequest, "Invalid query parameter: year must be an integer")
+		return
+	}
+
+	rank, err := strconv.Atoi(rankStr)
+	if err != nil {
+		common.SendFailure(c, http.StatusBadRequest, "Invalid query parameter: rank must be an integer")
+		return
+	}
+
+	predictions, err := ctrl.service.PredictColleges(c.Request.Context(), year, round, course, category, rank)
+	if err != nil {
+		common.SendFailure(c, http.StatusInternalServerError, "Failed to predict colleges: "+err.Error())
+		return
+	}
+
+	common.SendSuccess(c, predictions)
 }

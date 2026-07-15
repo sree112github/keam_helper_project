@@ -50,6 +50,16 @@ func (s *Service) GetRank(ctx context.Context, year int, round string, collegeCo
 	return s.repo.GetRank(ctx, year, round, collegeCode, course, category)
 }
 
+// GetCoursesByYear retrieves distinct courses for a specific year.
+func (s *Service) GetCoursesByYear(ctx context.Context, year int) ([]string, error) {
+	return s.repo.GetCoursesByYear(ctx, year)
+}
+
+// PredictColleges looks up colleges where the rank is eligible.
+func (s *Service) PredictColleges(ctx context.Context, year int, round string, course string, category string, rank int) ([]PredictionDTO, error) {
+	return s.repo.PredictColleges(ctx, year, round, course, category, rank)
+}
+
 // GetCategories dynamically loads category listings from category_info.json file.
 func (s *Service) GetCategories(ctx context.Context) ([]CategoryDTO, error) {
 	// Try reading category_info.json from multiple possible relative paths

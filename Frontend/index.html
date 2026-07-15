@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KEAM Last Rank Finder | Official Cutoff & Last Rank Analysis</title>
-    <meta name="description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+    <meta name="description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically. Features include College Predictor based on rank, and historical cutoff search by year, round, college, course, and category.">
+    <meta name="keywords" content="KEAM, Last Rank, Cutoff, College Predictor, Kerala Engineering Allotment, KEAM 2024, KEAM 2025, Engineering Ranks Kerala">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://authentication-tutorial-01.web.app/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://authentication-tutorial-01.web.app/">
-    <meta property="og:title" content="KEAM Last Rank Finder | Cutoff & Last Rank Analysis">
-    <meta property="og:description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+    <meta property="og:title" content="KEAM Last Rank Finder & College Predictor">
+    <meta property="og:description" content="Search historical KEAM cutoff lists or use the College Predictor to find engineering colleges based on your rank and category.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://authentication-tutorial-01.web.app/">
-    <meta property="twitter:title" content="KEAM Last Rank Finder | Cutoff & Last Rank Analysis">
-    <meta property="twitter:description" content="Search and analyze KEAM engineering cutoff and last rank lists dynamically by year, round, college, course, and category.">
+    <meta property="twitter:title" content="KEAM Last Rank Finder & College Predictor">
+    <meta property="twitter:description" content="Search historical KEAM cutoff lists or use the College Predictor to find engineering colleges based on your rank and category.">
 
     <!-- Google Font Inter for modern premium typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,12 +32,17 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "KEAM Last Rank Finder",
+      "name": "KEAM Last Rank Finder & College Predictor",
       "url": "https://authentication-tutorial-01.web.app",
-      "description": "An interactive search tool to analyze and find KEAM engineering allotment cutoff ranks and last rank lists dynamically.",
+      "description": "An interactive search tool to analyze and find KEAM engineering allotment cutoff ranks and predict eligible colleges dynamically based on rank.",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "All",
-      "browserRequirements": "Requires JavaScript. Requires HTML5."
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "featureList": [
+        "Search KEAM Cutoff Ranks",
+        "Predict Eligible Engineering Colleges based on KEAM Rank",
+        "Filter by Year, Course, Round, and Reservation Category"
+      ]
     }
     </script>
 </head>
@@ -93,7 +99,12 @@
         <main class="app-main">
             <!-- Search Panel -->
             <section class="card search-card">
-                <h2 class="card-title">Search Cutoff Rank</h2>
+                <div class="tabs-container">
+                    <button id="tab-search" class="tab-btn active">Search Cutoff</button>
+                    <button id="tab-predict" class="tab-btn attention-pulse">College Predictor <span class="badge-new">NEW</span></button>
+                </div>
+                
+                <!-- Search Form -->
                 <form id="search-form" class="search-form" onsubmit="event.preventDefault();">
                     <!-- Year Dropdown -->
                     <div class="form-group">
@@ -138,6 +149,47 @@
                     <!-- Search Action -->
                     <button id="btn-search" type="button" class="btn btn-search" disabled>Search Last Rank</button>
                 </form>
+
+                <!-- Predictor Form -->
+                <form id="predict-form" class="search-form hidden" onsubmit="event.preventDefault();">
+                    <!-- Informational Note -->
+                    <div class="predictor-note">
+                        <p>ℹ️ This analysis is based on the last available rank of the previous year second allotment.</p>
+                    </div>
+
+                    <!-- Year Dropdown -->
+                    <div class="form-group">
+                        <label for="predict-year">Select Year</label>
+                        <select id="predict-year" class="form-select">
+                            <option value="" disabled selected>Select Year</option>
+                        </select>
+                    </div>
+
+                    <!-- Course Dropdown -->
+                    <div class="form-group">
+                        <label for="predict-course">Select Course</label>
+                        <select id="predict-course" class="form-select" disabled>
+                            <option value="" disabled selected>Select Course</option>
+                        </select>
+                    </div>
+
+                    <!-- Rank Input -->
+                    <div class="form-group">
+                        <label for="predict-rank">Your Rank</label>
+                        <input type="number" id="predict-rank" class="form-input" placeholder="Enter your rank" disabled>
+                    </div>
+
+                    <!-- Category Dropdown -->
+                    <div class="form-group">
+                        <label for="predict-category">Select Category</label>
+                        <select id="predict-category" class="form-select" disabled>
+                            <option value="" disabled selected>Select Category</option>
+                        </select>
+                    </div>
+
+                    <!-- Predict Action -->
+                    <button id="btn-predict" type="button" class="btn btn-search" disabled>Predict Colleges</button>
+                </form>
             </section>
 
             <!-- Results Panel -->
@@ -150,7 +202,7 @@
                 </div>
 
                 <!-- Active Rank Result -->
-                <div id="results-card" class="card results-card hidden">
+                <div id="results-card" class="card results-card hidden" aria-live="polite">
                     <span class="results-badge">Allotment Cutoff</span>
                     <div class="rank-display">
                         <span class="rank-label">LAST RANK</span>
@@ -182,11 +234,34 @@
                 </div>
 
                 <!-- Error Display -->
-                <div id="error-card" class="card error-card hidden">
-                    <div class="error-icon">⚠️</div>
+                <div id="error-card" class="card error-card hidden" aria-live="assertive">
+                    <div class="error-icon" aria-hidden="true">⚠️</div>
                     <h3 id="error-title">No Rank Found</h3>
                     <p id="error-message">We couldn't find a rank for the specified category. It's likely that no seats were allotted for this category in the selected round/course.</p>
                     <button id="btn-retry-init" type="button" class="btn btn-retry hidden">Retry Connection</button>
+                </div>
+
+                <!-- Predictor Results Table -->
+                <div id="predict-results-card" class="card predict-results-card hidden" aria-live="polite">
+                    <h3 class="results-title">Predicted Colleges</h3>
+                    <div class="accuracy-notice" style="margin-bottom: 15px;">
+                        <p class="notice-en">⚠️ <strong>Notice:</strong> This may be inaccurate, please confirm it with official sources.</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="predict-table">
+                            <thead>
+                                <tr>
+                                    <th>College Code</th>
+                                    <th>College Name</th>
+                                    <th>Round</th>
+                                    <th>Cutoff Rank</th>
+                                </tr>
+                            </thead>
+                            <tbody id="predict-tbody">
+                                <!-- Rows injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </main>
@@ -210,6 +285,12 @@
                     <p>പ്രവേശനവുമായി ബന്ധപ്പെട്ട അന്തിമ തീരുമാനങ്ങൾ എടുക്കുന്നതിന് മുമ്പ് CEE കേരളയുടെ ഔദ്യോഗിക Last Rank PDF നിർബന്ധമായും പരിശോധിക്കുക.</p>
                 </div>
             </div>
+            
+            <div class="social-links">
+                <a href="https://www.youtube.com/c/KeralaTechWorld" target="_blank" rel="noopener noreferrer" class="social-link">YouTube: KeralaTechWorld</a> | 
+                <a href="https://www.linkedin.com/in/sreekuttan-j-s" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn</a>
+            </div>
+
             <div class="copyright">
                 <p>&copy; 2026 KEAM Last Rank Finder. Designed with visual excellence.</p>
             </div>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://authentication-tutorial-01.web.app/sitemap.xml
